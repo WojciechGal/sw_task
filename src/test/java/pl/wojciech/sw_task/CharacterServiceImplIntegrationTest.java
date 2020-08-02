@@ -24,6 +24,7 @@ public class CharacterServiceImplIntegrationTest {
         public CharacterService characterService() {
             return new CharacterServiceImpl();
         }
+
     }
 
     @Autowired
