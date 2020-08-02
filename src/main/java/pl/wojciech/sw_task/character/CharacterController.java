@@ -11,7 +11,7 @@ public class CharacterController {
     private CharacterService characterService;
 
     @GetMapping
-    public CharactersPage getCharacters(@RequestParam(defaultValue = "1L") Long page) {
+    public CharactersPage getCharacters(@RequestParam(defaultValue = "1") Long page) {
         return characterService.getCharactersByPageNumber(page);
     }
 
