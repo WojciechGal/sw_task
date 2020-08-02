@@ -25,7 +25,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         RestTemplate restTemplate = new RestTemplate();
 
-        ResponseEntity<Character> forEntity = restTemplate.getForEntity(SW_API + "/people/" + id.toString(), Character.class);
+        ResponseEntity<Character> forEntity = restTemplate.getForEntity(SW_API + "/people/" + id.toString() + "/", Character.class);
 
         return forEntity.getBody();
 
