@@ -1,4 +1,4 @@
-# Spring Boot Application Star Wars Task
+# Star Wars Task
 
 Spring Boot RESTful app created with various technologies.
 
