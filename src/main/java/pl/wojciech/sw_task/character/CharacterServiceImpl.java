@@ -14,6 +14,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         RestTemplate restTemplate = new RestTemplate();
 
+        //todo walidacja przekroczonego parametru
         ResponseEntity<CharactersPage> forEntity = restTemplate.getForEntity(SW_API + "/people/?page=" + pageNumber.toString(), CharactersPage.class);
 
         return forEntity.getBody();
@@ -25,6 +26,7 @@ public class CharacterServiceImpl implements CharacterService {
 
         RestTemplate restTemplate = new RestTemplate();
 
+        //todo walidacja przekroczonego parametru
         ResponseEntity<Character> forEntity = restTemplate.getForEntity(SW_API + "/people/" + id.toString() + "/", Character.class);
 
         return forEntity.getBody();
