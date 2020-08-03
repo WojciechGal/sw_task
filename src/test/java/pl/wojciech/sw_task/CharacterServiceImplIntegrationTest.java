@@ -16,6 +16,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 @ExtendWith(SpringExtension.class)
 public class CharacterServiceImplIntegrationTest {
 
+    /*
+    serwis powinien mockować warstwę repozytorium i pracować na fałszywych danych,
+    jednak ze względu na brak w/w warstwy w tej klasie testowej
+    sprawdzane jest realne połączenie do zewnętrznego API
+     */
+
     @TestConfiguration
     static class CharacterServiceImplTestContextConfiguration {
 
