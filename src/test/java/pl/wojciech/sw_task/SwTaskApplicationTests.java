@@ -23,6 +23,19 @@ class SwTaskApplicationTests {
     @Autowired
     private MockMvc mvc;
 
+    private static final class GenericNotFoundResponse {
+
+        private String detail = "Not found";
+
+        public String getDetail() {
+            return detail;
+        }
+
+        public void setDetail(String detail) {
+            this.detail = detail;
+        }
+    }
+
     @Test
     void contextLoads() {
     }
@@ -43,7 +56,8 @@ class SwTaskApplicationTests {
         mvc.perform(get("/characters/0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", notNullValue()));
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.detail", is(new GenericNotFoundResponse().getDetail())));
     }
 
     @Test
@@ -62,7 +76,8 @@ class SwTaskApplicationTests {
         mvc.perform(get("/characters?page=0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", notNullValue()));
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.detail", is(new GenericNotFoundResponse().getDetail())));
     }
 
 }

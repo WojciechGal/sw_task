@@ -77,7 +77,8 @@ public class CharacterControllerIntegrationTest {
         mvc.perform(get("/characters/0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", notNullValue()));
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.detail", is(new GenericNotFoundResponse().getDetail())));
     }
 
     @Test
@@ -112,7 +113,8 @@ public class CharacterControllerIntegrationTest {
         mvc.perform(get("/characters?page=0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$", notNullValue()));
+                .andExpect(jsonPath("$", notNullValue()))
+                .andExpect(jsonPath("$.detail", is(new GenericNotFoundResponse().getDetail())));
     }
 
 }
