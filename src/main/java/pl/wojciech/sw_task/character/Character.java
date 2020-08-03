@@ -25,5 +25,4 @@ public class Character {
     private String created;
     private String edited;
     private String url;
-
 }

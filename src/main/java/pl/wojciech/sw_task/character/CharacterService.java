@@ -1,9 +1,10 @@
 package pl.wojciech.sw_task.character;
 
+import org.springframework.http.ResponseEntity;
+
 public interface CharacterService {
 
-    CharactersPage getCharactersByPageNumber(Long pageNumber);
+    ResponseEntity<?> getCharactersByPageNumber(Long pageNumber);
 
-    Character getCharacterById(Long id);
-
+    ResponseEntity<?> getCharacterById(Long id);
 }

@@ -1,20 +1,19 @@
 package pl.wojciech.sw_task;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.test.context.junit4.SpringRunner;
-import pl.wojciech.sw_task.character.Character;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import pl.wojciech.sw_task.character.CharacterService;
 import pl.wojciech.sw_task.character.CharacterServiceImpl;
-import pl.wojciech.sw_task.character.CharactersPage;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 public class CharacterServiceImplIntegrationTest {
 
     @TestConfiguration
@@ -31,33 +30,33 @@ public class CharacterServiceImplIntegrationTest {
     private CharacterService characterService;
 
     @Test
-    public void ifServiceImplHasConnectionCharacterNotNull() {
+    public void givenCharacterId_whenServiceImplHasConnection_thenCharacterIsNotNull() {
 
-        Character testCharacter = characterService.getCharacterById(1L);
-
-        assertThat(testCharacter, is(notNullValue()));
-    }
-
-    @Test
-    public void ifServiceImplCharacterHasBeenValidated() {
-
-        Character testCharacter = characterService.getCharacterById(0L);
+        ResponseEntity<?> testCharacter = characterService.getCharacterById(1L);
 
         assertThat(testCharacter, is(notNullValue()));
     }
 
     @Test
-    public void ifServiceImplHasConnectionCharactersPageNotNull() {
+    public void givenCharacterId_whenServiceImplHasConnection_thenWrongIdHasBeenValidated() {
 
-        CharactersPage testCharactersPage = characterService.getCharactersByPageNumber(1L);
+        ResponseEntity<?> testCharacter = characterService.getCharacterById(0L);
+
+        assertThat(testCharacter, is(notNullValue()));
+    }
+
+    @Test
+    public void givenPageNumber_whenServiceImplHasConnection_thenCharactersPageIsNotNull() {
+
+        ResponseEntity<?> testCharactersPage = characterService.getCharactersByPageNumber(1L);
 
         assertThat(testCharactersPage, is(notNullValue()));
     }
 
     @Test
-    public void ifServiceImplCharactersPageHasBeenValidated() {
+    public void givenPageNumber_whenServiceImplHasConnection_thanWrongCharactersPageHasBeenValidated() {
 
-        CharactersPage testCharactersPage = characterService.getCharactersByPageNumber(0L);
+        ResponseEntity<?> testCharactersPage = characterService.getCharactersByPageNumber(0L);
 
         assertThat(testCharactersPage, is(notNullValue()));
     }

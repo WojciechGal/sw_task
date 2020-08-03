@@ -13,5 +13,4 @@ public class CharactersPage {
     private String next;
     private String previous;
     private List<Character> results;
-
 }
