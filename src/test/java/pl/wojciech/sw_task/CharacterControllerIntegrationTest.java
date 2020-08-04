@@ -1,15 +1,15 @@
 package pl.wojciech.sw_task;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.client.RestClientResponseException;
 import pl.wojciech.sw_task.character.*;
 import pl.wojciech.sw_task.character.Character;
 
@@ -18,6 +18,7 @@ import java.util.Collections;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -53,12 +54,7 @@ public class CharacterControllerIntegrationTest {
 
         testCharacter.setName("Darth Vader");
 
-        ResponseEntity<?> responseCharacter = new ResponseEntity<>(testCharacter, HttpStatus.OK);
-
-        //metoda poniżej nie przyjmie obiektu z parametrem typu
-        //given(characterService.getCharacterById(1L)).willReturn(responseCharacter);
-
-        doReturn(responseCharacter).when(characterService).getCharacterById(1L);
+        given(characterService.getCharacterById(1L)).willReturn(testCharacter);
 
         mvc.perform(get("/characters/1")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -70,9 +66,12 @@ public class CharacterControllerIntegrationTest {
     @Test
     public void givenValidatedResponse_whenGetCharacterWrong_thenValidatedResponseReceived() throws Exception {
 
-        ResponseEntity<?> response = new ResponseEntity<>(new GenericNotFoundResponse(), HttpStatus.NOT_FOUND);
-
-        doReturn(response).when(characterService).getCharacterById(0L);
+        given(characterService.getCharacterById(0L)).willThrow(new RestClientResponseException(null,
+                404,
+                null,
+                null,
+                new ObjectMapper().writeValueAsBytes(new GenericNotFoundResponse()),
+                null));
 
         mvc.perform(get("/characters/0")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -92,9 +91,7 @@ public class CharacterControllerIntegrationTest {
 
         testCharactersPage.setResults(Collections.singletonList(testCharacter));
 
-        ResponseEntity<?> responseCharactersPage = new ResponseEntity<>(testCharactersPage, HttpStatus.OK);
-
-        doReturn(responseCharactersPage).when(characterService).getCharactersByPageNumber(1L);
+        given(characterService.getCharactersByPageNumber(1L)).willReturn(testCharactersPage);
 
         mvc.perform(get("/characters?page=1")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -106,9 +103,12 @@ public class CharacterControllerIntegrationTest {
     @Test
     public void givenValidatedResponse_whenGetCharactersPageWrong_thenValidatedResponseReceived() throws Exception {
 
-        ResponseEntity<?> response = new ResponseEntity<>(new GenericNotFoundResponse(), HttpStatus.NOT_FOUND);
-
-        doReturn(response).when(characterService).getCharactersByPageNumber(0L);
+        given(characterService.getCharactersByPageNumber(0L)).willThrow(new RestClientResponseException(null,
+                404,
+                null,
+                null,
+                new ObjectMapper().writeValueAsBytes(new GenericNotFoundResponse()),
+                null));
 
         mvc.perform(get("/characters?page=0")
                 .contentType(MediaType.APPLICATION_JSON))

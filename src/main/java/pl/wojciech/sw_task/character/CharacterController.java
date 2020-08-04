@@ -1,11 +1,14 @@
 package pl.wojciech.sw_task.character;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientResponseException;
 
 @RestController
 @AllArgsConstructor
+@Slf4j
 @RequestMapping("/characters")
 public class CharacterController {
 
@@ -13,11 +16,33 @@ public class CharacterController {
 
     @GetMapping(produces = "application/json")
     public ResponseEntity<?> getCharacters(@RequestParam(defaultValue = "1") Long page) {
-        return characterService.getCharactersByPageNumber(page);
+
+        try {
+            return ResponseEntity.ok(characterService.getCharactersByPageNumber(page));
+
+        } catch (RestClientResponseException e) {
+
+            log.error(e.getMessage());
+
+            return ResponseEntity
+                    .status(e.getRawStatusCode())
+                    .body(e.getResponseBodyAsString());
+        }
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<?> getCharacter(@PathVariable Long id) {
-        return characterService.getCharacterById(id);
+
+        try {
+            return ResponseEntity.ok(characterService.getCharacterById(id));
+
+        } catch (RestClientResponseException e) {
+
+            log.error(e.getMessage());
+
+            return ResponseEntity
+                    .status(e.getRawStatusCode())
+                    .body(e.getResponseBodyAsString());
+        }
     }
 }
