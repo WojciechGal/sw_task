@@ -1,5 +1,7 @@
 package pl.wojciech.sw_task.character;
 
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,9 @@ public class CharacterController {
     private CharacterService characterService;
 
     @GetMapping(produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK",
+                    response = CharactersPage.class)})
     public ResponseEntity<?> getCharacters(@RequestParam(defaultValue = "1") Long page) {
 
         try {
@@ -31,6 +36,9 @@ public class CharacterController {
     }
 
     @GetMapping(value = "/{id}", produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK",
+                    response = Character.class)})
     public ResponseEntity<?> getCharacter(@PathVariable Long id) {
 
         try {
