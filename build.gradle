@@ -6,7 +6,8 @@ plugins {
 
 group = 'pl.wojciech'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '8'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 configurations {
     compileOnly {
@@ -36,6 +37,11 @@ dependencies {
             'org.spockframework:spock-spring:1.2-groovy-2.4',
             'org.codehaus.groovy:groovy-all:2.4.4'
     )
+}
+
+bootJar {
+    baseName = 'sw_task'
+    version =  '0.0.1-SNAPSHOT'
 }
 
 test {
