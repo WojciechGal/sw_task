@@ -41,4 +41,14 @@ Finally run the fresh container:
 docker run -p 8080:8080 wojciech/sw_task
 ```
 
-App is running under 192.168.99.100 address
+App is running under default http://192.168.99.100:8080/ address.
+
+## Running the Prometheus monitoring of docker container (Windows 10 Home)
+
+First step is to download Prometheus for Windows and follow steps of this tutorial:
+
+https://mclarenappliedtechnologies.zendesk.com/hc/en-us/articles/360008182953-Setting-up-Infrastructure-Monitoring-with-Prometheus-and-Grafana
+
+In the next step switch prometheus.yaml with this attached to this project and execute prometheus.exe.
+
+Monitoring is visible under http://localhost:9090/ address.
