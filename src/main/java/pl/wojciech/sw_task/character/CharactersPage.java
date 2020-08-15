@@ -1,12 +1,12 @@
 package pl.wojciech.sw_task.character;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CharactersPage {
 
     private Long count;

@@ -1,6 +1,6 @@
 package pl.wojciech.sw_task.character;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import pl.wojciech.sw_task.film.Film;
 import pl.wojciech.sw_task.planet.Planet;
@@ -11,7 +11,7 @@ import pl.wojciech.sw_task.vehicle.Vehicle;
 import java.util.List;
 
 @Data
-@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Character {
 
     private String name;
