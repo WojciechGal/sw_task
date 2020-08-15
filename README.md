@@ -49,6 +49,6 @@ First step is to download Prometheus for Windows and follow steps of this tutori
 
 https://mclarenappliedtechnologies.zendesk.com/hc/en-us/articles/360008182953-Setting-up-Infrastructure-Monitoring-with-Prometheus-and-Grafana
 
-In the next step switch prometheus.yaml with this attached to this project and execute prometheus.exe.
+In the next step switch prometheus.yml with this attached to this project and execute prometheus.exe.
 
 Monitoring is visible under http://localhost:9090/ address.
