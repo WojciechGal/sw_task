@@ -37,28 +37,11 @@ public class CharacterServiceImpl implements CharacterService {
         log.info("Records count: " + characterPageMap.get("count"));
 
         return new ObjectMapper().convertValue(characterPageMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            // object mapper nie przetwarza konwersji nulli
             if (entry.getValue() == null) {
                 return "-";
             } else if ("results".equals(entry.getKey())) {
-                return (((List<Map<String, Object>>) entry.getValue()).stream().map(character -> new ObjectMapper().convertValue(character.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, characterEntry -> {
-                    if (characterEntry.getValue() == null) {
-                        return "-";
-                    }
-                    switch(characterEntry.getKey()) {
-                        case "homeworld":
-                            return planetService.getPlanetByURI(((String) characterEntry.getValue()).replaceFirst("http", "https"));
-                        case "films":
-                            return filmService.getFilmByURIs(((List<String>) characterEntry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
-                        case "species":
-                            return speciesService.getSpeciesByURIs(((List<String>) characterEntry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
-                        case "vehicles":
-                            return vehicleService.getVehicleByURIs(((List<String>) characterEntry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
-                        case "starships":
-                            return starshipService.getStarshipByURIs(((List<String>) characterEntry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
-                        default:
-                            return characterEntry.getValue();
-                    }
-                })), Character.class)).collect(Collectors.toList()));
+                return (((List<Map<String, Object>>) entry.getValue()).stream().map(character -> new ObjectMapper().convertValue(mapCharacterAndFillAdditionalData(character), Character.class)).collect(Collectors.toList()));
             }
             return entry.getValue();
         })), CharactersPage.class);
@@ -71,7 +54,12 @@ public class CharacterServiceImpl implements CharacterService {
 
         log.info("Character name: " + characterMap.get("name"));
 
-        return new ObjectMapper().convertValue(characterMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+        return new ObjectMapper().convertValue(mapCharacterAndFillAdditionalData(characterMap), Character.class);
+    }
+
+    private Map<?, ?> mapCharacterAndFillAdditionalData(Map<String, Object> characterMap) {
+        return characterMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            // object mapper nie przetwarza konwersji nulli
             if (entry.getValue() == null) {
                 return "-";
             }
@@ -89,6 +77,6 @@ public class CharacterServiceImpl implements CharacterService {
                 default:
                     return entry.getValue();
             }
-        })), Character.class);
+        }));
     }
 }
