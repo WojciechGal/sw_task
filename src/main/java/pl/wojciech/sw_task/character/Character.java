@@ -1,12 +1,17 @@
 package pl.wojciech.sw_task.character;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import pl.wojciech.sw_task.film.Film;
+import pl.wojciech.sw_task.planet.Planet;
+import pl.wojciech.sw_task.species.Species;
+import pl.wojciech.sw_task.starship.Starship;
+import pl.wojciech.sw_task.vehicle.Vehicle;
 
 import java.util.List;
 
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
+@AllArgsConstructor
 public class Character {
 
     private String name;
@@ -17,12 +22,11 @@ public class Character {
     private String eye_color;
     private String birth_year;
     private String gender;
-    private String homeworld;
-    private List<String> films;
-    private List<String> species;
-    private List<String> vehicles;
-    private List<String> starships;
+    private Planet homeworld;
+    private List<Film> films;
+    private List<Species> species;
+    private List<Vehicle> vehicles;
+    private List<Starship> starships;
     private String created;
     private String edited;
-    private String url;
 }
