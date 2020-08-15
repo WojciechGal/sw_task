@@ -32,60 +32,56 @@ public class CharacterServiceImpl implements CharacterService {
     @Override
     public CharactersPage getCharactersByPageNumber(Long pageNumber) {
 
-        RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> characterPageMap = new RestTemplate().getForObject(SW_API + "/people/?page=" + pageNumber.toString(), Map.class);
 
-//        ResponseEntity<CharactersPageDTO> forEntity = restTemplate.getForEntity(SW_API + "/people/?page=" + pageNumber.toString(),
-//                CharactersPageDTO.class);
-//
-//        log.info("Records count: " + forEntity.getBody().getCount());
-//
-//        return mapCharPageDTOtoCharacterPage(forEntity.getBody());
-        return null;
+        log.info("Records count: " + characterPageMap.get("count"));
+
+        return new ObjectMapper().convertValue(characterPageMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            if ("results".equals(entry.getKey())) {
+                return (((List<Map<String, Object>>) entry.getValue()).stream().map(character -> new ObjectMapper().convertValue(character.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, characterEntry -> {
+                    System.out.println(characterEntry.getKey() + " - " + characterEntry.getValue());
+                    switch(characterEntry.getKey()) {
+                        case "homeworld":
+                            return planetService.getPlanetByURI(((String) characterEntry.getValue()).replaceFirst("http", "https"));
+                        case "films":
+                            return filmService.getFilmByURIs(((List<String>) characterEntry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                        case "species":
+                            return speciesService.getSpeciesByURIs(((List<String>) characterEntry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                        case "vehicles":
+                            return vehicleService.getVehicleByURIs(((List<String>) characterEntry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                        case "starships":
+                            return starshipService.getStarshipByURIs(((List<String>) characterEntry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                        default:
+                            return characterEntry.getValue();
+                    }
+                })), Character.class)).collect(Collectors.toList()));
+            }
+            return entry.getValue();
+        })), CharactersPage.class);
     }
 
     @Override
     public Character getCharacterById(Long id) {
 
         Map<String, Object> characterMap = new RestTemplate().getForObject(SW_API + "/people/" + id.toString() + "/", Map.class);
-//        for (Map.Entry entry: characterMap.entrySet()){
-//        if ("homeworld".equals(entry.getKey())) {
-//            entry.setValue(planetService.getPlanetByURI((String) entry.getValue()));
-//        } else if ("films".equals(entry.getKey())) {
-//            entry.setValue(filmService.getFilmByURIs((List<String>) entry.getValue()));
-//        } else if ("species".equals(entry.getKey())) {
-//            entry.setValue(speciesService.getSpeciesByURIs((List<String>) entry.getValue()));
-//        } else if ("vehicles".equals(entry.getKey())) {
-//            entry.setValue(vehicleService.getVehicleByURIs((List<String>) entry.getValue()));
-//        } else if ("starships".equals(entry.getKey())) {
-//            entry.setValue(starshipService.getStarshipByURIs((List<String>) entry.getValue()));
-//        }
-//        }
 
-        // characterMap.put("homeworld", planetService.getPlanetByURI(characterMap.));
+        log.info("Character name: " + characterMap.get("name"));
 
-        //log.info("Character name: " + forEntity.getBody().getName());
-
-//        final ObjectMapper mapper = new ObjectMapper(); // jackson's objectmapper
-//        final CharacterDTO pojo = mapper.convertValue(characterMap, CharacterDTO.class);
-        return new ObjectMapper().convertValue(characterMap.entrySet().stream().map(entry -> {
-            if ("homeworld".equals(entry.getKey())) {
-                entry.setValue(planetService.getPlanetByURI(((String) entry.getValue()).replaceFirst("http", "https")));
-                return entry;
-            } else if ("films".equals(entry.getKey())) {
-                entry.setValue(filmService.getFilmByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList())));
-                return entry;
-            } else if ("species".equals(entry.getKey())) {
-                entry.setValue(speciesService.getSpeciesByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList())));
-                return entry;
-            } else if ("vehicles".equals(entry.getKey())) {
-                entry.setValue(vehicleService.getVehicleByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList())));
-                return entry;
-            } else if ("starships".equals(entry.getKey())) {
-                entry.setValue(starshipService.getStarshipByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList())));
-                return entry;
-            } else {
-                return entry;
+        return new ObjectMapper().convertValue(characterMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            switch(entry.getKey()) {
+                case "homeworld":
+                    return planetService.getPlanetByURI(((String) entry.getValue()).replaceFirst("http", "https"));
+                case "films":
+                    return filmService.getFilmByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                case "species":
+                    return speciesService.getSpeciesByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                case "vehicles":
+                    return vehicleService.getVehicleByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                case "starships":
+                    return starshipService.getStarshipByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                default:
+                    return entry.getValue();
             }
-        }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)), Character.class);
+        })), Character.class);
     }
 }
