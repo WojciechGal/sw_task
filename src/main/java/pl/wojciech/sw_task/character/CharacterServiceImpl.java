@@ -37,9 +37,13 @@ public class CharacterServiceImpl implements CharacterService {
         log.info("Records count: " + characterPageMap.get("count"));
 
         return new ObjectMapper().convertValue(characterPageMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-            if ("results".equals(entry.getKey())) {
+            if (entry.getValue() == null) {
+                return "-";
+            } else if ("results".equals(entry.getKey())) {
                 return (((List<Map<String, Object>>) entry.getValue()).stream().map(character -> new ObjectMapper().convertValue(character.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, characterEntry -> {
-                    System.out.println(characterEntry.getKey() + " - " + characterEntry.getValue());
+                    if (characterEntry.getValue() == null) {
+                        return "-";
+                    }
                     switch(characterEntry.getKey()) {
                         case "homeworld":
                             return planetService.getPlanetByURI(((String) characterEntry.getValue()).replaceFirst("http", "https"));
@@ -68,6 +72,9 @@ public class CharacterServiceImpl implements CharacterService {
         log.info("Character name: " + characterMap.get("name"));
 
         return new ObjectMapper().convertValue(characterMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            if (entry.getValue() == null) {
+                return "-";
+            }
             switch(entry.getKey()) {
                 case "homeworld":
                     return planetService.getPlanetByURI(((String) entry.getValue()).replaceFirst("http", "https"));
