@@ -12,6 +12,7 @@ import pl.wojciech.sw_task.species.SpeciesService;
 import pl.wojciech.sw_task.starship.StarshipService;
 import pl.wojciech.sw_task.vehicle.VehicleService;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,15 +37,13 @@ public class CharacterServiceImpl implements CharacterService {
 
         log.info("Records count: " + characterPageMap.get("count"));
 
-        return new ObjectMapper().convertValue(characterPageMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-            // object mapper nie przetwarza konwersji nulli
-            if (entry.getValue() == null) {
-                return "-";
-            } else if ("results".equals(entry.getKey())) {
-                return (((List<Map<String, Object>>) entry.getValue()).stream().map(character -> new ObjectMapper().convertValue(mapCharacterAndFillAdditionalData(character), Character.class)).collect(Collectors.toList()));
+        return new ObjectMapper().convertValue(characterPageMap.entrySet().stream().collect(HashMap::new, (map, entry) -> {
+            if ("results".equals(entry.getKey())) {
+                map.put(entry.getKey(), (((List<Map<String, Object>>) entry.getValue()).stream().map(character -> new ObjectMapper().convertValue(mapCharacterAndFillAdditionalData(character), Character.class)).collect(Collectors.toList())));
+            } else {
+                map.put(entry.getKey(), entry.getValue());
             }
-            return entry.getValue();
-        })), CharactersPage.class);
+        }, HashMap::putAll), CharactersPage.class);
     }
 
     @Override
@@ -58,25 +57,27 @@ public class CharacterServiceImpl implements CharacterService {
     }
 
     private Map<?, ?> mapCharacterAndFillAdditionalData(Map<String, Object> characterMap) {
-        return characterMap.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-            // object mapper nie przetwarza konwersji nulli
-            if (entry.getValue() == null) {
-                return "-";
-            }
-            switch(entry.getKey()) {
+        return characterMap.entrySet().stream().collect(HashMap::new, (map, entry) -> {
+            switch (entry.getKey()) {
                 case "homeworld":
-                    return planetService.getPlanetByURI(((String) entry.getValue()).replaceFirst("http", "https"));
+                    map.put(entry.getKey(), planetService.getPlanetByURI(((String) entry.getValue()).replaceFirst("http", "https")));
+                    break;
                 case "films":
-                    return filmService.getFilmByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                    map.put(entry.getKey(), filmService.getFilmByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList())));
+                    break;
                 case "species":
-                    return speciesService.getSpeciesByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                    map.put(entry.getKey(), speciesService.getSpeciesByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList())));
+                    break;
                 case "vehicles":
-                    return vehicleService.getVehicleByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                    map.put(entry.getKey(), vehicleService.getVehicleByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList())));
+                    break;
                 case "starships":
-                    return starshipService.getStarshipByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList()));
+                    map.put(entry.getKey(), starshipService.getStarshipByURIs(((List<String>) entry.getValue()).stream().map(film -> film.replaceFirst("http", "https")).collect(Collectors.toList())));
+                    break;
                 default:
-                    return entry.getValue();
+                    map.put(entry.getKey(), entry.getValue());
+                    break;
             }
-        }));
+        }, HashMap::putAll);
     }
 }
