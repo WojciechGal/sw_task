@@ -32,13 +32,13 @@ public class CharacterServiceImpl implements CharacterService {
     @Override
     public CharactersPage getCharactersByPageNumber(Long pageNumber) {
 
-        Map<String, Object> characterPageMap = new RestTemplate().getForObject(SW_API + "/people/?page=" + pageNumber.toString(), Map.class);
+        Map<String, ?> characterPageMap = new RestTemplate().getForObject(SW_API + "/people/?page=" + pageNumber.toString(), Map.class);
 
         log.info("Records count: " + characterPageMap.get("count"));
 
         return new ObjectMapper().convertValue(characterPageMap.entrySet().stream().collect(HashMap::new, (map, entry) -> {
             if ("results".equals(entry.getKey())) {
-                map.put(entry.getKey(), (((List<Map<String, Object>>) entry.getValue()).stream().map(character -> new ObjectMapper().convertValue(mapCharacterAndFillAdditionalData(character), Character.class)).collect(Collectors.toList())));
+                map.put(entry.getKey(), (((List<Map<String, ?>>) entry.getValue()).stream().map(character -> new ObjectMapper().convertValue(mapCharacterAndFillAdditionalData(character), Character.class)).collect(Collectors.toList())));
             } else {
                 map.put(entry.getKey(), entry.getValue());
             }
@@ -48,14 +48,14 @@ public class CharacterServiceImpl implements CharacterService {
     @Override
     public Character getCharacterById(Long id) {
 
-        Map<String, Object> characterMap = new RestTemplate().getForObject(SW_API + "/people/" + id.toString() + "/", Map.class);
+        Map<String, ?> characterMap = new RestTemplate().getForObject(SW_API + "/people/" + id.toString() + "/", Map.class);
 
         log.info("Character name: " + characterMap.get("name"));
 
         return new ObjectMapper().convertValue(mapCharacterAndFillAdditionalData(characterMap), Character.class);
     }
 
-    private Map<String, ?> mapCharacterAndFillAdditionalData(Map<String, Object> characterMap) {
+    private Map<String, ?> mapCharacterAndFillAdditionalData(Map<String, ?> characterMap) {
         return characterMap.entrySet().stream().collect(HashMap::new, (map, entry) -> {
             switch (entry.getKey()) {
                 case "homeworld":
