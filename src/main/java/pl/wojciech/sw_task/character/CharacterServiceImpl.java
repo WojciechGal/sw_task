@@ -3,7 +3,6 @@ package pl.wojciech.sw_task.character;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import pl.wojciech.sw_task.film.FilmService;
@@ -56,7 +55,7 @@ public class CharacterServiceImpl implements CharacterService {
         return new ObjectMapper().convertValue(mapCharacterAndFillAdditionalData(characterMap), Character.class);
     }
 
-    private Map<?, ?> mapCharacterAndFillAdditionalData(Map<String, Object> characterMap) {
+    private Map<String, ?> mapCharacterAndFillAdditionalData(Map<String, Object> characterMap) {
         return characterMap.entrySet().stream().collect(HashMap::new, (map, entry) -> {
             switch (entry.getKey()) {
                 case "homeworld":
